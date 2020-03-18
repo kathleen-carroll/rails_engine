@@ -75,6 +75,7 @@ task :load_seed => [:reset, :import_customers, :import_merchants, :import_invoic
     file = "db/data/transactions.csv"
 
     CSV.foreach(file, :headers => true) do |row|
+      # require "pry"; binding.pry
       ActiveRecord::Base.connection.execute("ALTER SEQUENCE transactions_id_seq RESTART;")
       Transaction.create(row.to_hash)
     end
