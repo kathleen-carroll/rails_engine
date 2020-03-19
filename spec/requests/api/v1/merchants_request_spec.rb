@@ -48,4 +48,16 @@ RSpec.describe "Merchants API" do
     expect(updated_merchant.name).to eq(new_name)
     expect(updated_merchant.name).to_not eq(og_name)
   end
+
+  it 'can destroy a merchant' do
+    merchant = create(:merchant)
+
+    expect(Merchant.count).to eq(1)
+
+    delete "/api/v1/merchants/#{merchant.id}"
+
+    expect(response).to be_successful
+    expect(Merchant.count).to eq(0)
+    expect{(Merchant.find(merchant.id))}.to raise_error(ActiveRecord::RecordNotFound)
+  end
 end
