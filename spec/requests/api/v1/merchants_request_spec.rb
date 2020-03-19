@@ -41,7 +41,7 @@ RSpec.describe "Merchants API" do
     new_name = create(:merchant).name
     merchant_params = {name: new_name}
 
-    put "/api/v1/merchants/#{merchant.id}", params: {merchant: merchant_params}
+    patch "/api/v1/merchants/#{merchant.id}", params: {merchant: merchant_params}
     updated_merchant = Merchant.find(merchant.id)
 
     expect(response).to be_successful
