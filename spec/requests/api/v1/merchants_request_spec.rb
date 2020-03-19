@@ -34,4 +34,18 @@ RSpec.describe "Merchants API" do
     expect(response).to be_successful
     expect(merchant.name).to eq(merchant_params[:name])
   end
+
+  it 'can update a merchant' do
+    merchant = create(:merchant)
+    og_name = merchant.name
+    new_name = create(:merchant).name
+    merchant_params = {name: new_name}
+
+    put "/api/v1/merchants/#{merchant.id}", params: {merchant: merchant_params}
+    updated_merchant = Merchant.find(merchant.id)
+
+    expect(response).to be_successful
+    expect(updated_merchant.name).to eq(new_name)
+    expect(updated_merchant.name).to_not eq(og_name)
+  end
 end
