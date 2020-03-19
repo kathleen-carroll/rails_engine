@@ -11,7 +11,7 @@ RSpec.describe "Merchants API" do
 
     merchants = JSON.parse(response.body)
 
-    expect(merchants.count).to eq(3)
+    expect(merchants["data"].count).to eq(3)
   end
 
   it "can get a single merchant by id" do
@@ -22,7 +22,7 @@ RSpec.describe "Merchants API" do
     merchant_resp = JSON.parse(response.body)
 
     expect(response).to be_successful
-    expect(merchant_resp["id"]).to eq(merchant.id)
+    expect(merchant_resp["data"]["id"].to_i).to eq(merchant.id)
   end
 
   it 'can create a new merchant' do
