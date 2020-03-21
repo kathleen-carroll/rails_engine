@@ -7,6 +7,9 @@ Rails.application.routes.draw do
       end
 
       resources :items
+      namespace :items do
+        get '/:id/merchant', to: 'merchants#show'
+      end
     end
   end
 end
