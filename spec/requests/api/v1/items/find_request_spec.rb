@@ -13,7 +13,7 @@ RSpec.describe 'Item Find Api' do
     expect(response).to be_successful
 
     item_response = JSON.parse(response.body)
-
+# require "pry"; binding.pry
     expect(item_response["data"]['attributes']['name']).to eq(item.name)
   end
 
@@ -48,5 +48,23 @@ RSpec.describe 'Item Find Api' do
 
     expect(item_response["data"].first['attributes']['name']).to eq(item.name)
     expect(item_response["data"].last['attributes']['name']).to eq(item2.name)
+  end
+
+  it 'find item by name and description' do
+    item = create(:item, name: "Chambray", description: "blue")
+    item2 = create(:item, name: "Ray of Sunshine", description: "yellow")
+    item3 = create(:item, name: "Nope")
+    value = "ray"
+    attribute = 'name'
+    value2 = "blue"
+    attribute2 = 'description'
+
+    get "/api/v1/items/find?#{attribute}=#{value}&#{attribute2}=#{value2}"
+
+    expect(response).to be_successful
+
+    item_response = JSON.parse(response.body)
+
+    expect(item_response["data"]['attributes']['name']).to eq(item.name)
   end
 end
