@@ -42,4 +42,30 @@ RSpec.describe "Merchants API" do
     expect(merchant_response["data"].first['attributes']['name']).to eq(@invoice_item3.item.merchant.name)
     expect(merchant_response["data"].last['attributes']['name']).to eq(@invoice_item2.item.merchant.name)
   end
+
+  it 'can find revenue for one merchant' do
+    id = @invoice_item.item.merchant.id
+    get "/api/v1/merchants/#{id}/revenue"
+
+    expect(response).to be_successful
+
+    merchant_response = JSON.parse(response.body)
+
+    expect(merchant_response["data"].first['attributes']['revenue']).to eq(@invoice_item.unit_price * @invoice_item.quantity)
+
+    new_invoice = create(:invoice, merchant: @invoice_item.invoice.merchant)
+    new_item = create(:item, merchant: @invoice_item.invoice.merchant)
+    new_invoice_item = create(:invoice_item, quantity: 20, unit_price: 50.79, item: new_item, invoice: new_invoice)
+    # new_invoice_item.item.merchant = @invoice_item.invoice.merchant
+    # new_invoice_item.invoice.merchant = @invoice_item.invoice.merchant
+    new_trans = create(:transaction, invoice: new_invoice)
+    revenue = (@invoice_item.unit_price * @invoice_item.quantity) + (new_invoice_item.unit_price * new_invoice_item.quantity)
+
+    id = @invoice_item.item.merchant.id
+    get "/api/v1/merchants/#{id}/revenue"
+
+    new_merchant_response = JSON.parse(response.body)
+
+    expect(new_merchant_response["data"].first['attributes']['revenue']).to eq(revenue)
+  end
 end

@@ -24,4 +24,17 @@ class Api::V1::Merchants::BusinessController < ApplicationController
 
       render json: MerchantSerializer.new(query)
   end
+
+  def revenue
+    query = Merchant
+      .joins(:transactions)
+      .joins(:invoice_items)
+      .where("transactions.result = 'success' and merchants.id = #{params[:id]}")
+      .distinct
+      .select('sum(distinct invoice_items.unit_price * invoice_items.quantity) as revenue')
+      .distinct
+      .group(:id)
+
+    render json: RevenueSerializer.new(query)
+  end
 end
