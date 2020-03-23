@@ -5,6 +5,7 @@ Rails.application.routes.draw do
         get '/:merchant_id/items', to: 'items#index'
         get '/find', to: 'find#show'
         get '/find_all', to: 'find#show_all'
+        get '/most_revenue', to: 'business#most_revenue'
       end
       resources :merchants, only: [:index, :create, :show, :update, :destroy]
 
