@@ -10,6 +10,7 @@ Rails.application.routes.draw do
         get ':id/revenue', to: 'business#revenue'
       end
       resources :merchants, only: [:index, :create, :show, :update, :destroy]
+      get '/revenue', to: 'merchants/business#revenue_date'
 
       namespace :items do
         get '/:id/merchant', to: 'merchants#show'

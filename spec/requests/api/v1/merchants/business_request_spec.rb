@@ -56,8 +56,6 @@ RSpec.describe "Merchants API" do
     new_invoice = create(:invoice, merchant: @invoice_item.invoice.merchant)
     new_item = create(:item, merchant: @invoice_item.invoice.merchant)
     new_invoice_item = create(:invoice_item, quantity: 20, unit_price: 50.79, item: new_item, invoice: new_invoice)
-    # new_invoice_item.item.merchant = @invoice_item.invoice.merchant
-    # new_invoice_item.invoice.merchant = @invoice_item.invoice.merchant
     new_trans = create(:transaction, invoice: new_invoice)
     revenue = (@invoice_item.unit_price * @invoice_item.quantity) + (new_invoice_item.unit_price * new_invoice_item.quantity)
 
@@ -67,5 +65,26 @@ RSpec.describe "Merchants API" do
     new_merchant_response = JSON.parse(response.body)
 
     expect(new_merchant_response["data"].first['attributes']['revenue']).to eq(revenue)
+  end
+
+  it 'can find revenue across date range' do
+    new_invoice = create(:invoice, merchant: @invoice_item.invoice.merchant)
+    new_item = create(:item, merchant: @invoice_item.invoice.merchant)
+    new_invoice_item = create(:invoice_item, quantity: 20, unit_price: 50.79, item: new_item, invoice: new_invoice)
+    new_trans = create(:transaction, invoice: new_invoice, created_at: '2012-03-27 14:54:09 UTC')
+
+    new_invoice2 = create(:invoice, merchant: @invoice_item.invoice.merchant)
+    new_item2 = create(:item, merchant: @invoice_item.invoice.merchant)
+    new_invoice_item2 = create(:invoice_item, quantity: 20, unit_price: 50.79, item: new_item2, invoice: new_invoice2)
+    new_trans2 = create(:transaction, invoice: new_invoice2, created_at: '2012-03-27 14:54:09 UTC')
+    revenue = (20 * 50.79) + (20 * 50.79)
+
+    get "/api/v1/revenue?start=2012-03-09&end=2012-03-28"
+
+    expect(response).to be_successful
+
+    resp = JSON.parse(response.body)
+
+    expect(resp["data"].first["attributes"]["revenue"]).to eq(revenue)
   end
 end

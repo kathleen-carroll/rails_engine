@@ -37,4 +37,17 @@ class Api::V1::Merchants::BusinessController < ApplicationController
 
     render json: RevenueSerializer.new(query)
   end
+
+  def revenue_date
+    startdate = DateTime.parse(params[:start])
+    enddate = DateTime.parse(params[:end])
+
+    query = Invoice
+      .joins(:transactions)
+      .joins(:invoice_items)
+      .where(transactions: {created_at: startdate..enddate, result: 'success'})
+      .select('sum(invoice_items.unit_price * invoice_items.quantity) as revenue')
+
+    render json: RevenueSerializer.new(query)
+  end
 end
